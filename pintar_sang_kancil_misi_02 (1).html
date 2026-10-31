@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pintar Sang Kancil – Misi Membaca</title>
+<style>
+:root{
+ --green:#287d45;--dark:#145631;--leaf:#a9df70;--cream:#fffdf4;
+ --gold:#ffd45b;--orange:#ff9a45;--blue:#dff5ff;--ink:#26352b;
+ --shadow:0 12px 30px rgba(22,76,43,.16)
+}
+*{box-sizing:border-box}
+body{
+ margin:0;min-height:100vh;color:var(--ink);
+ font-family:Arial,Helvetica,sans-serif;
+ background:linear-gradient(#8ed8ee 0 36%,#c7ed9d 36% 48%,#eaf7dd 48% 100%);
+}
+button,input{font:inherit}
+button{cursor:pointer;border:0}
+.app{width:min(900px,94%);margin:0 auto;padding:15px 0 35px}
+.topbar{
+ display:flex;justify-content:space-between;align-items:center;gap:10px;
+ background:#fffdf0;border:3px solid white;border-radius:16px;
+ padding:12px 18px;box-shadow:var(--shadow)
+}
+.brand{font-size:clamp(16px,3vw,23px);font-weight:900;color:var(--dark)}
+.score{font-weight:900;font-size:clamp(16px,3vw,21px);white-space:nowrap}
+.game{
+ margin-top:15px;background:var(--cream);border:3px solid white;
+ border-radius:22px;overflow:hidden;box-shadow:var(--shadow)
+}
+.forest{
+ height:150px;position:relative;overflow:hidden;
+ background:linear-gradient(#8ddcf0 0 66%,#9edb64 66% 100%)
+}
+.sun{position:absolute;right:9%;top:18px;width:48px;height:48px;border-radius:50%;background:#ffe88a;box-shadow:0 0 25px #fff3a6}
+.cloud{position:absolute;top:22px;left:10%;font-size:35px;opacity:.8}
+.tree{position:absolute;bottom:20px;font-size:42px}
+.t1{left:8%}.t2{left:27%}.t3{right:27%}.t4{right:7%}
+.path{position:absolute;bottom:0;height:28px;width:100%;background:#5b5b58}
+.path:after{content:"";position:absolute;left:0;right:0;top:13px;border-top:3px dashed #fff4b0}
+.kancil{
+ position:absolute;bottom:15px;left:48%;font-size:58px;
+ filter:drop-shadow(0 4px 2px #577c39);
+ animation:bounce 1.8s ease-in-out infinite
+}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.content{padding:clamp(17px,4vw,30px);text-align:center}
+h1{margin:0;color:var(--dark);font-size:clamp(25px,5vw,38px)}
+.tagline{margin:8px 0 18px;color:#536957;line-height:1.5}
+.row{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;align-items:center}
+.level-label{font-weight:800;color:var(--dark)}
+select{
+ padding:10px 13px;border:2px solid #c7dfc8;border-radius:12px;
+ background:white;font-weight:700;color:#274c31
+}
+.instruction{
+ background:#e9f6e8;border:2px solid #cce8c9;border-radius:15px;
+ padding:14px;margin:17px auto 15px;max-width:650px;font-weight:800;
+ color:#315d36;font-size:clamp(17px,3vw,21px)
+}
+.sentence-card{
+ max-width:680px;margin:0 auto;background:#fff;
+ border:3px solid #e6c65d;border-radius:18px;padding:24px 17px;
+ box-shadow:0 5px 0 #f4e5b0
+}
+.sentence{font-size:clamp(23px,4.5vw,35px);font-weight:900;line-height:1.5;color:#263c29}
+.hint{font-size:14px;color:#6c786e;margin-top:10px}
+.controls{margin:18px 0 10px;display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+.btn{
+ border-radius:14px;padding:13px 20px;font-weight:900;
+ background:var(--green);color:white;box-shadow:0 5px 0 #15532f;
+ transition:.15s
+}
+.btn:active{transform:translateY(3px);box-shadow:0 2px 0 #15532f}
+.btn.gold{background:var(--gold);color:#674900;box-shadow:0 5px 0 #d0a72f}
+.btn.blue{background:#dff3ff;color:#145477;box-shadow:0 5px 0 #a7d5e9}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.result-box{
+ margin:15px auto 0;max-width:680px;min-height:58px;padding:13px;
+ border-radius:13px;background:#f2f5f1;text-align:left;line-height:1.5
+}
+.feedback{font-weight:800;margin-top:7px;color:#27683b}
+.progress-wrap{height:12px;background:#e5eee5;border-radius:20px;overflow:hidden;margin:18px auto 8px;max-width:680px}
+.progress{height:100%;width:0;background:linear-gradient(90deg,#43ae62,#ffcf4d);transition:width .3s}
+.small{font-size:13px;color:#647267;line-height:1.5}
+.panel{
+ display:none;margin:18px auto 0;max-width:700px;background:#f3faef;
+ border:2px solid #d9edcf;border-radius:17px;padding:18px;text-align:left
+}
+.panel.show{display:block}
+.panel h2{margin:0 0 12px;color:var(--dark);font-size:22px}
+.record-list{padding-left:20px;line-height:1.8}
+.certificate{
+ background:white;border:8px double #d6ac36;border-radius:10px;padding:22px;
+ text-align:center;color:#244a2c
+}
+.certificate h2{font-size:26px;color:#a16d08}
+.name-input{width:min(100%,360px);padding:11px;border:2px solid #c7dfc8;border-radius:10px;margin:8px 0}
+.hidden{display:none!important}
+footer{text-align:center;color:#386146;font-size:12px;margin-top:15px}
+@media(max-width:560px){
+ .forest{height:125px}.kancil{left:43%;font-size:50px}
+ .topbar{padding:10px 12px}.btn{width:100%}
+ .controls{display:grid;grid-template-columns:1fr}
+}
+@media print{
+ body{background:white}.topbar,.forest,.content>*:not(#certificatePanel),footer{display:none!important}
+ .game{border:0;box-shadow:none}.panel{display:block!important;border:0}
+ #certificatePanel{display:block!important}
+}
+</style>
+</head>
+<body>
+<div class="app">
+ <header class="topbar">
+  <div class="brand">🌿 PINTAR SANG KANCIL</div>
+  <div class="score">Markah: <span id="score">0</span></div>
+ </header>
+
+ <main class="game">
+  <div class="forest" aria-hidden="true">
+   <div class="sun"></div><div class="cloud">☁️</div>
+   <div class="tree t1">🌳</div><div class="tree t2">🌴</div>
+   <div class="tree t3">🌳</div><div class="tree t4">🌲</div>
+   <div class="path"></div><div class="kancil" id="kancil">🦌</div>
+  </div>
+
+  <section class="content">
+   <h1>Misi 02: Pembaca Bijak</h1>
+   <p class="tagline">Bantu Sang Kancil menyelesaikan cabaran membaca di hutan!</p>
+
+   <div class="row">
+    <span class="level-label">Pilih tahap:</span>
+    <select id="level" onchange="changeLevel()">
+     <option value="easy">Tahap 1 – Mudah</option>
+     <option value="medium">Tahap 2 – Sederhana</option>
+     <option value="hard">Tahap 3 – Mencabar</option>
+    </select>
+   </div>
+
+   <div class="instruction" id="instruction">Klik butang mikrofon dan mula sebut!</div>
+
+   <div class="sentence-card">
+    <div class="sentence" id="sentence">Sang Kancil berjalan di dalam hutan.</div>
+    <div class="hint" id="sentenceHint">Baca ayat dengan jelas dan sebut setiap perkataan.</div>
+   </div>
+
+   <div class="progress-wrap"><div class="progress" id="progress"></div></div>
+   <div class="small" id="counter">Ayat 1 daripada 5</div>
+
+   <div class="controls">
+    <button class="btn gold" id="micBtn" onclick="startReading()">🎙 MULA MEMBACA</button>
+    <button class="btn blue" onclick="speakSentence()">🔊 DENGAR AYAT</button>
+    <button class="btn" id="nextBtn" onclick="nextSentence()" disabled>SETERUSNYA ➜</button>
+   </div>
+
+   <div class="result-box" aria-live="polite">
+    <strong>Bacaan yang dikesan:</strong>
+    <div id="transcript">Belum ada bacaan.</div>
+    <div class="feedback" id="feedback">Sang Kancil sedang menunggu bacaan kamu! 🦌</div>
+   </div>
+
+   <div class="controls">
+    <button class="btn blue" onclick="showRecords()">📋 REKOD PENCAPAIAN</button>
+    <button class="btn blue" onclick="showCertificate()">🏅 SIJIL DIGITAL</button>
+   </div>
+
+   <div class="panel" id="recordPanel">
+    <h2>📋 Rekod Pencapaian</h2>
+    <div id="recordSummary" class="small">Belum ada rekod untuk sesi ini.</div>
+    <ol id="recordList" class="record-list"></ol>
+    <button class="btn blue" onclick="hidePanels()">TUTUP</button>
+   </div>
+
+   <div class="panel" id="certificatePanel">
+    <h2>🏅 Sijil Pencapaian</h2>
+    <label for="studentName"><strong>Nama murid:</strong></label><br>
+    <input id="studentName" class="name-input" maxlength="50" placeholder="Masukkan nama murid">
+    <div class="certificate" id="certificate">
+     <div style="font-size:42px">🌟 🦌 🌟</div>
+     <h2>SIJIL PENCAPAIAN</h2>
+     <p>Dengan ini diperakui bahawa</p>
+     <h2 id="certName">Murid Hebat</h2>
+     <p>telah menyelesaikan <strong>Misi 02: Pembaca Bijak</strong><br>
+      dalam aktiviti BBM Pintar Sang Kancil.</p>
+     <p>Markah: <strong id="certScore">0</strong></p>
+     <p id="certDate" class="small"></p>
+     <div style="font-size:30px">🏆 ⭐ 🌳</div>
+    </div>
+    <div class="controls">
+     <button class="btn gold" onclick="printCertificate()">CETAK / SIMPAN SIJIL</button>
+     <button class="btn blue" onclick="hidePanels()">TUTUP</button>
+    </div>
+    <p class="small">Untuk menyimpan sijil sebagai PDF, pilih "Save as PDF" dalam tetingkap cetakan.</p>
+   </div>
+  </section>
+ </main>
+ <footer>BBM Bahasa Melayu • Kemahiran Membaca • Tema Pintar Sang Kancil</footer>
+</div>
+
+<script>
+const levels={
+ easy:[
+  "Sang Kancil berjalan di dalam hutan.",
+  "Hutan itu sangat besar dan hijau.",
+  "Sang Kancil melihat seekor rama-rama.",
+  "Burung berkicau di atas pokok.",
+  "Sang Kancil berasa gembira."
+ ],
+ medium:[
+  "Pada suatu pagi, Sang Kancil keluar mencari makanan.",
+  "Dia berjalan perlahan-lahan di tepi sungai yang jernih.",
+  "Tiba-tiba, Sang Kancil terdengar bunyi dari arah semak.",
+  "Seekor arnab sedang mencari tempat perlindungan.",
+  "Sang Kancil membantu arnab itu mencari jalan pulang."
+ ],
+ hard:[
+  "Sang Kancil menggunakan kebijaksanaannya untuk menyelesaikan masalah di dalam hutan.",
+  "Dia menasihati haiwan-haiwan supaya bekerjasama dan saling membantu.",
+  "Walaupun menghadapi pelbagai cabaran, Sang Kancil tidak mudah berputus asa.",
+  "Akhirnya, semua haiwan berjaya hidup dengan aman dan harmoni.",
+  "Kebijaksanaan perlulah disertai sikap bertanggungjawab dan berbudi pekerti."
+ ]
+};
+
+let level="easy", index=0, score=0, recognition=null, listening=false;
+let results=[], awarded=false;
+const $=id=>document.getElementById(id);
+
+function currentSentences(){return levels[level]}
+function normalize(s){
+ return s.toLocaleLowerCase("ms-MY").replace(/[.,!?;:]/g,"").replace(/\s+/g," ").trim();
+}
+function updateDisplay(){
+ const list=currentSentences();
+ $("sentence").textContent=list[index];
+ $("counter").textContent=`Ayat ${index+1} daripada ${list.length}`;
+ $("progress").style.width=(index/list.length*100)+"%";
+ $("transcript").textContent="Belum ada bacaan.";
+ $("feedback").textContent="Baca ayat dengan jelas. Sang Kancil menyokong kamu! 🦌";
+ $("nextBtn").disabled=true;
+ $("micBtn").disabled=false;
+ $("micBtn").textContent="🎙 MULA MEMBACA";
+ $("instruction").textContent="Klik butang mikrofon dan mula sebut!";
+ $("kancil").textContent="🦌";
+}
+function changeLevel(){
+ stopRecognition();
+ level=$("level").value;index=0;score=0;results=[];awarded=false;
+ $("score").textContent=score;hidePanels();updateDisplay();
+ speak("Mari cuba tahap "+(level==="easy"?"mudah":level==="medium"?"sederhana":"mencabar")+".");
+}
+function speak(text){
+ if(!("speechSynthesis" in window)){
+  $("feedback").textContent="Audio automatik tidak disokong oleh pelayar ini.";return;
+ }
+ window.speechSynthesis.cancel();
+ const u=new SpeechSynthesisUtterance(text);
+ u.lang="ms-MY";u.rate=.9;u.pitch=1.1;
+ const voice=window.speechSynthesis.getVoices().find(v=>v.lang.toLowerCase().startsWith("ms"));
+ if(voice)u.voice=voice;
+ window.speechSynthesis.speak(u);
+}
+function speakSentence(){speak(currentSentences()[index]);}
+function startReading(){
+ const API=window.SpeechRecognition||window.webkitSpeechRecognition;
+ if(!API){
+  $("feedback").textContent="Pengecaman suara tidak disokong. Sila cuba Google Chrome.";return;
+ }
+ if(listening)return;
+ recognition=new API();
+ recognition.lang="ms-MY";recognition.interimResults=false;recognition.maxAlternatives=1;
+ recognition.onstart=()=>{
+  listening=true;$("micBtn").disabled=true;$("micBtn").textContent="🎙 SEDANG MENDENGAR...";
+  $("instruction").textContent="Bagus! Teruskan membaca ayat dengan kuat.";
+  $("feedback").textContent="Sang Kancil sedang mendengar...";
+  $("kancil").textContent="🦌";
+ };
+ recognition.onresult=e=>{
+  const spoken=e.results[0][0].transcript;
+  $("transcript").textContent=spoken;
+  evaluate(spoken);
+ };
+ recognition.onerror=e=>{
+  const msg=e.error==="not-allowed"?"Akses mikrofon belum dibenarkan. Sila benarkan mikrofon pada pelayar.":"Suara tidak dapat dikesan. Cuba sekali lagi.";
+  $("feedback").textContent=msg;
+ };
+ recognition.onend=()=>{
+  listening=false;$("micBtn").disabled=false;$("micBtn").textContent="🎙 CUBA LAGI";
+ };
+ try{recognition.start()}catch(err){$("feedback").textContent="Mikrofon sedang digunakan. Cuba sebentar lagi."}
+}
+function stopRecognition(){
+ if(recognition){try{recognition.abort()}catch(e){}}
+ listening=false;
+}
+function evaluate(spoken){
+ const expected=normalize(currentSentences()[index]).split(" ");
+ const said=normalize(spoken).split(" ");
+ let matched=0;const used=new Set();
+ expected.forEach(word=>{
+  const found=said.findIndex((w,i)=>w===word&&!used.has(i));
+  if(found>=0){matched++;used.add(found)}
+ });
+ const percent=Math.round(matched/expected.length*100);
+ const points=Math.round(percent/10);
+ results[index]={spoken,matched,total:expected.length,points,percent};
+ score=results.reduce((sum,r)=>sum+(r?r.points:0),0);
+ $("score").textContent=score;
+ $("feedback").textContent=`${matched} daripada ${expected.length} perkataan dikenal pasti. Markah ayat: ${points}/10.`;
+ $("instruction").textContent=percent>=80?"Syabas! Bacaan kamu sangat baik!":"Bagus kerana mencuba! Baca sekali lagi jika mahu.";
+ $("kancil").textContent=percent>=80?"🦌⭐":"🦌👏";
+ $("nextBtn").disabled=false;
+ speak(percent>=80?"Syabas! Bacaan kamu sangat baik!":"Bagus! Teruskan usaha. Kamu boleh mencuba lagi.");
+}
+function nextSentence(){
+ if(!results[index])return;
+ if(index<currentSentences().length-1){
+  index++;updateDisplay();
+ }else{
+  $("progress").style.width="100%";
+  $("instruction").textContent="Tahniah! Kamu telah menyelesaikan tahap ini!";
+  $("sentence").textContent="Syabas, Wira Pembaca! 🏆";
+  $("sentenceHint").textContent="Tekan Rekod Pencapaian atau Sijil Digital untuk melihat hasil.";
+  $("counter").textContent="Semua ayat telah selesai";
+  $("micBtn").disabled=true;$("nextBtn").disabled=true;
+  $("kancil").textContent="🦌🏆";
+  speak("Tahniah! Kamu telah menyelesaikan semua ayat. Sang Kancil bangga dengan kamu!");
+ }
+}
+function hidePanels(){$("recordPanel").classList.remove("show");$("certificatePanel").classList.remove("show")}
+function showRecords(){
+ hidePanels();$("recordPanel").classList.add("show");
+ const completed=results.filter(Boolean);
+ $("recordSummary").textContent=`Tahap: ${level==="easy"?"Mudah":level==="medium"?"Sederhana":"Mencabar"} • Markah terkumpul: ${score} daripada ${currentSentences().length*10}`;
+ $("recordList").innerHTML="";
+ completed.forEach((r,i)=>{
+  const li=document.createElement("li");
+  li.textContent=`Ayat ${i+1}: ${r.matched}/${r.total} perkataan dikenal pasti – ${r.points}/10 markah`;
+  $("recordList").appendChild(li);
+ });
+ if(!completed.length)$("recordList").innerHTML="<li>Belum ada bacaan direkodkan.</li>";
+}
+function showCertificate(){
+ hidePanels();$("certificatePanel").classList.add("show");
+ $("certScore").textContent=score+" markah";
+ $("certDate").textContent="Tarikh: "+new Date().toLocaleDateString("ms-MY");
+ $("certName").textContent=$("studentName").value.trim()||"Murid Hebat";
+}
+$("studentName").addEventListener("input",()=>{
+ $("certName").textContent=$("studentName").value.trim()||"Murid Hebat";
+});
+function printCertificate(){showCertificate();window.print()}
+updateDisplay();
+</script>
+</body>
+</html>
